@@ -246,6 +246,7 @@ Logs out the authenticated user by blacklisting the JWT token and clearing the a
 
 ---
 
+
 # Captain Endpoints Documentation
 
 ## Endpoint
@@ -253,117 +254,114 @@ Logs out the authenticated user by blacklisting the JWT token and clearing the a
 ### Register Captain
 `POST /captains/register`
 
-## Description
-Registers a new captain in the system. This endpoint creates a captain account with the provided details and returns an authentication token upon successful registration.
+Registers a new captain in the system. Returns a JWT token and the created captain object.
 
-## Request Body
-Send a JSON object with the following structure:
-
+#### Request Body
 ```
 {
-  "fullname": {
-    "firstname": "string (min 3 chars, required)",
-    "lastname": "string (min 3 chars, optional)"
-  },
-  "email": "string (valid email, required)",
-  "password": "string (min 6 chars, required)",
+  "fullname": { "firstname": "string", "lastname": "string" },
+  "email": "string",
+  "password": "string",
   "vehicle": {
-    "color": "string (min 3 chars, required)",
-    "plate": "string (min 3 chars, required)",
-    "capacity": "number (min 1, required)",
-    "vehicleType": "string (car|motorcycle|auto, required)"
+    "color": "string",
+    "plate": "string",
+    "capacity": "number",
+    "vehicleType": "string"
   }
 }
 ```
 
-### Example
-```
-{
-  "fullname": {
-    "firstname": "Alice",
-    "lastname": "Smith"
-  },
-  "email": "alice.smith@example.com",
-  "password": "securePassword123",
-  "vehicle": {
-    "color": "Red",
-    "plate": "XYZ123",
-    "capacity": 4,
-    "vehicleType": "car"
-  }
-}
-```
-
-## Validation
-- `email`: Must be a valid email address.
-- `fullname.firstname`: Must be at least 3 characters long.
-- `password`: Must be at least 6 characters long.
-- `vehicle.color`: Must be at least 3 characters long.
-- `vehicle.plate`: Must be at least 3 characters long.
-- `vehicle.capacity`: Must be at least 1.
-- `vehicle.vehicleType`: Must be one of: car, motorcycle, auto.
-
-## Responses
-
-### Success
-- **Status Code:** `201 Created`
-- **Body:**
+#### Success Response
+- **201 Created**
   ```json
   {
     "token": "<JWT token>",
-    "captain": {
-      "_id": "<captain id>",
-      "fullname": {
-        "firstname": "Alice",
-        "lastname": "Smith"
-      },
-      "email": "alice.smith@example.com",
-      "vehicle": {
-        "color": "Red",
-        "plate": "XYZ123",
-        "capacity": 4,
-        "vehicleType": "car"
-      }
-      // ...other captain fields
-    }
+    "captain": { /* captain object */ }
   }
   ```
 
-### Validation Error
-- **Status Code:** `400 Bad Request`
-- **Body:**
+#### Errors
+- **400 Bad Request** (validation or duplicate email)
+  ```json
+  { "errors": [ /* ... */ ] }
+  // or
+  { "message": "Captain already exist" }
+  // or
+  { "message": "All fields are required" }
+  ```
+
+---
+
+### Login Captain
+`POST /captains/login`
+
+Authenticates a captain and returns a JWT token if credentials are valid.
+
+#### Request Body
+```
+{
+  "email": "string",
+  "password": "string"
+}
+```
+
+#### Success Response
+- **200 OK**
   ```json
   {
-    "errors": [
-      {
-        "msg": "Invalid Email",
-        "param": "email",
-        "location": "body"
-      },
-      // ...other errors
-    ]
+    "token": "<JWT token>",
+    "captain": { /* captain object */ }
   }
   ```
 
-### Duplicate Email
-- **Status Code:** `400 Bad Request`
-- **Body:**
+#### Errors
+- **400 Bad Request** (validation)
+  ```json
+  { "errors": [ /* ... */ ] }
+  ```
+- **401 Unauthorized** (invalid credentials)
+  ```json
+  { "message": "Invalid email or password" }
+  ```
+
+---
+
+### Captain Profile
+`GET /captains/profile`
+
+Returns the authenticated captain's profile. Requires JWT authentication.
+
+#### Success Response
+- **200 OK**
   ```json
   {
-    "message": "Captain already exist"
+    "captain": { /* captain object */ }
   }
   ```
 
-### Missing Fields
-- **Status Code:** `400 Bad Request`
-- **Body:**
+#### Errors
+- **401 Unauthorized**
   ```json
-  {
-    "message": "All fields are required"
-  }
+  { "message": "Unauthorized" }
   ```
 
-## Notes
-- The password is securely hashed before storing.
-- The response includes a JWT token for authentication.
-- The endpoint expects the request body in JSON format.
+---
+
+### Captain Logout
+`GET /captains/logout`
+
+Logs out the captain by blacklisting the JWT token and clearing the cookie. Requires JWT authentication.
+
+#### Success Response
+- **200 OK**
+  ```json
+  { "message": "Logout successfully" }
+  ```
+
+#### Errors
+- **401 Unauthorized**
+  ```json
+  { "message": "Unauthorized" }
+  ```
+
+---
