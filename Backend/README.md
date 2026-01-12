@@ -1,3 +1,4 @@
+
 # User Endpoints Documentation
 
 ## Endpoint
@@ -242,6 +243,127 @@ Logs out the authenticated user by blacklisting the JWT token and clearing the a
   }
   ```
 
+
+---
+
+# Captain Endpoints Documentation
+
+## Endpoint
+
+### Register Captain
+`POST /captains/register`
+
+## Description
+Registers a new captain in the system. This endpoint creates a captain account with the provided details and returns an authentication token upon successful registration.
+
+## Request Body
+Send a JSON object with the following structure:
+
+```
+{
+  "fullname": {
+    "firstname": "string (min 3 chars, required)",
+    "lastname": "string (min 3 chars, optional)"
+  },
+  "email": "string (valid email, required)",
+  "password": "string (min 6 chars, required)",
+  "vehicle": {
+    "color": "string (min 3 chars, required)",
+    "plate": "string (min 3 chars, required)",
+    "capacity": "number (min 1, required)",
+    "vehicleType": "string (car|motorcycle|auto, required)"
+  }
+}
+```
+
+### Example
+```
+{
+  "fullname": {
+    "firstname": "Alice",
+    "lastname": "Smith"
+  },
+  "email": "alice.smith@example.com",
+  "password": "securePassword123",
+  "vehicle": {
+    "color": "Red",
+    "plate": "XYZ123",
+    "capacity": 4,
+    "vehicleType": "car"
+  }
+}
+```
+
+## Validation
+- `email`: Must be a valid email address.
+- `fullname.firstname`: Must be at least 3 characters long.
+- `password`: Must be at least 6 characters long.
+- `vehicle.color`: Must be at least 3 characters long.
+- `vehicle.plate`: Must be at least 3 characters long.
+- `vehicle.capacity`: Must be at least 1.
+- `vehicle.vehicleType`: Must be one of: car, motorcycle, auto.
+
+## Responses
+
+### Success
+- **Status Code:** `201 Created`
+- **Body:**
+  ```json
+  {
+    "token": "<JWT token>",
+    "captain": {
+      "_id": "<captain id>",
+      "fullname": {
+        "firstname": "Alice",
+        "lastname": "Smith"
+      },
+      "email": "alice.smith@example.com",
+      "vehicle": {
+        "color": "Red",
+        "plate": "XYZ123",
+        "capacity": 4,
+        "vehicleType": "car"
+      }
+      // ...other captain fields
+    }
+  }
+  ```
+
+### Validation Error
+- **Status Code:** `400 Bad Request`
+- **Body:**
+  ```json
+  {
+    "errors": [
+      {
+        "msg": "Invalid Email",
+        "param": "email",
+        "location": "body"
+      },
+      // ...other errors
+    ]
+  }
+  ```
+
+### Duplicate Email
+- **Status Code:** `400 Bad Request`
+- **Body:**
+  ```json
+  {
+    "message": "Captain already exist"
+  }
+  ```
+
+### Missing Fields
+- **Status Code:** `400 Bad Request`
+- **Body:**
+  ```json
+  {
+    "message": "All fields are required"
+  }
+  ```
+
 ## Notes
-- The endpoint blacklists the JWT token for 24 hours and clears the authentication cookie.
-- After logout, the token cannot be used for authentication until it expires from the blacklist.
+- The password is securely hashed before storing.
+- The response includes a JWT token for authentication.
+- The endpoint expects the request body in JSON format.
