@@ -1,18 +1,32 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { UserDataContext } from '../context/UserContext';
+import axios from 'axios';
 
 const UserLogin = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [userData, setUserData] = useState({})
+    const [userData, setUserData] = useState({});
 
-    const submitHandler = (e) => {
+    const {user, setUser} = React.useContext(UserDataContext)
+    const navigate = useNavigate();
+
+    const submitHandler = async (e) => {
         e.preventDefault();
-        setUserData({
-            email:email,
-            password:password
-        })
+
+        const userData = {
+            email: email,
+            password: password
+        }
+        const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/login`, userData)
+        if(response.status === 200) {
+            const data = response.data
+            setUser(data.user)
+            localStorage.setItem('token', JSON.stringify(data.user))
+            navigate('/home')
+        }
+
         setEmail('');
         setPassword('');
     }
@@ -22,7 +36,7 @@ const UserLogin = () => {
     <div className='p-7 h-screen flex flex-col justify-between'>
         <div>
             <img className='w-16 mb-10' src='https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.pngall.com%2Fwp-content%2Fuploads%2F4%2FUber-Logo-PNG-Free-Image.png&f=1&nofb=1&ipt=2e77fe86d457403e9b271246ac4ce6ce3f2413d15d0e90c625648d04cd48560d' />
-            <form onSubmit={(e)=> {submitHandler}}>
+            <form onSubmit={submitHandler}>
                 <h3 className='text-lg font-medium mb-2'>What's your email</h3>
                 <input 
                     className='bg-[#eeeeee] mb-7 rounded px-4 py-2 border w-full text-lg placeholder:text-base'

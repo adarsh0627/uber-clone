@@ -1,5 +1,7 @@
 import React, {useState} from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import axios from 'axios'
+import {UserDataContext} from '../context/UserContext'
 
 const UserSignup = () => {
 
@@ -7,18 +9,30 @@ const UserSignup = () => {
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [userData, setUserData] = useState({})
+
+  const navigate = useNavigate();
+  const {user, setUser} = React.useContext(UserDataContext)
   
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
       e.preventDefault();
-      setUserData({
-        fullName:{
-          firstName:firstName,
-          lastName:lastName,
+      const newUser = {
+        fullname:{
+          firstname: firstName,
+          lastname: lastName,
         },
-          email:email,
-          password:password
-      })
+        email: email,
+        password: password
+      }
+
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/register`, newUser)
+
+      if(response.status === 201) {
+        const data = response.data
+        setUser(data.user)
+        localStorage.setItem('token', data.token)
+        navigate('/home')
+      }
+
       setEmail('');
       setFirstName('');
       setLastName('');
@@ -29,7 +43,7 @@ const UserSignup = () => {
     <div className='p-7 h-screen flex flex-col justify-between'>
       <div>
         <img className='w-16 mb-10' src='https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.pngall.com%2Fwp-content%2Fuploads%2F4%2FUber-Logo-PNG-Free-Image.png&f=1&nofb=1&ipt=2e77fe86d457403e9b271246ac4ce6ce3f2413d15d0e90c625648d04cd48560d' />
-        <form onSubmit={(e) => { submitHandler }}>
+        <form onSubmit={ submitHandler }>
 
           <h3 className='text-lg font-medium mb-2'>What's your name</h3>
           <div className='flex gap-4 mb-7'>
@@ -73,7 +87,7 @@ const UserSignup = () => {
           />
 
           <button className='bg-[#111] text-[#fff] font-semibold mb-3 rounded px-4 py-2 w-full text-lg placeholder:text-base'>
-            Signup
+            Create account
           </button>
 
         </form>
