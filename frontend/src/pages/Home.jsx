@@ -118,7 +118,7 @@ const Home = () => {
           <form onSubmit={(e) => {
             submitHandler(e)
           }}>
-            <div className="line absolute h-16 w-1 top-[35%] left-10 bg-gray-700 rounded-full"></div>
+            <div className="line absolute h-16 w-1 top-[45%] left-10 bg-gray-700 rounded-full"></div>
             <input 
               onClick={() => {
                 setPanelOpen(true)
@@ -155,7 +155,7 @@ const Home = () => {
       <div ref={vehicleFoundRef} className='fixed w-full z-10 bg-white bottom-0 translate-y-full px-3 py-6 pt-12'>
         <LookingForDriver setVehicleFound={setVehicleFound} />
       </div>
-      <div ref={waitingForDriverRef} className='fixed w-full z-10 bg-white bottom-0  px-3 py-6 pt-12'>
+      <div ref={waitingForDriverRef} className='fixed w-full z-10 bg-white bottom-0 translate-y-full px-3 py-6 pt-12'>
         <WaitingForDriver setWaitingForDriver={setWaitingForDriver} />
       </div>
     </div>
