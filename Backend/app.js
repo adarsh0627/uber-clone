@@ -12,7 +12,12 @@ const cookieParser = require('cookie-parser');
 connectToDb();
 
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://uberclone-bice.vercel.app",
+    credentials: true
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(cookieParser());
