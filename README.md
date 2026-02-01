@@ -88,6 +88,7 @@ Uber-Clone/
 │   └── server.js
 │
 └── README.md
+```
 
 ---
 
@@ -98,26 +99,28 @@ Create the following `.env` files before running the project locally.
 ### Frontend (`frontend/.env`)
 ```env
 VITE_BASE_URL=http://localhost:4000
-
+```
 
 ### Backend (`Backend/.env`)
 ```env
 PORT=4000
 DB_CONNECT=your_mongodb_atlas_uri
 JWT_SECRET=your_secret_key
+```
+---
 
 ### Clone repository
-
+```bash
 git clone https://github.com/adarsh0627/Uber-Clone.git
 cd Uber-Clone
 
 ### Start Backend
-- cd Backend
-- npm install
-- npm start
+cd Backend
+npm install
+npm start
 
 ### Start frontend
-- cd frontend
-- npm install
-- npm run dev
-
+cd frontend
+npm install
+npm run dev
+```
