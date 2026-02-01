@@ -89,6 +89,7 @@ Uber-Clone/
 │
 └── README.md
 
+---
 
 ## ⚙️ Environment Variables
 
